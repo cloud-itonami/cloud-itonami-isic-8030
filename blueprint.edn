@@ -1,0 +1,11 @@
+{:itonami.blueprint/id "cloud-itonami-8030"
+ :itonami.blueprint/name "Community Investigation Services"
+ :itonami.blueprint/isic-rev5 "8030"
+ :itonami.blueprint/domain :commercial/investigation-services
+ :itonami.blueprint/license "AGPL-3.0-or-later"
+ :itonami.blueprint/social-impact [:due-process :fraud-deterrence :accountability]
+ :itonami.blueprint/governor :private-investigation-governor
+ :itonami.blueprint/robotics true
+ :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :labor]
+ :itonami.blueprint/optional-technologies [:optimization]
+ :itonami.blueprint/status :public-oss}
