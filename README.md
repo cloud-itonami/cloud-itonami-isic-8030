@@ -38,6 +38,28 @@ No automated advice can dispatch a robot/investigator action the governor
 refuses, license an investigator outside their verified scope, or publish
 an evidence report without governor approval and audit evidence.
 
+## Actor implementation (`src/investigation`)
+
+The `investigation.*` code in this repo implements a narrower, safer
+slice of the vision above: a **case-scheduling / evidence-logging
+COORDINATION actor**, not the full robotics-surveillance business
+blueprint described elsewhere on this page. Concretely, the shipped
+CaseCoordinator-LLM ⊣ RoutingGovernor actor (`investigation.operation`)
+exposes exactly four closed-allowlist proposal ops — `:log-case-record`,
+`:schedule-investigation-operation`, `:flag-legal-compliance-concern`,
+`:coordinate-report-delivery` — and **never renders an investigative
+conclusion (guilt/liability/fault) and never authorizes a surveillance
+method itself**. Neither capability is a proposal op this actor's
+allowlist recognizes at all; the governor's scope-exclusion-gate
+(`investigation.policy`) is a permanent, non-overridable hard block
+against either, independent of confidence, phase, or human approval.
+Every governor-clean commit only ever writes a `:propose`-shaped SSoT
+entry (`:status :proposed`/`:logged`) — this actor coordinates, it never
+finalizes. See `docs/adr` in the superproject
+(`com-junkawasaki/root`, ADR for ISIC 8030) for the full design
+rationale, and `test/investigation/scope_exclusion_test.clj` for the
+regression test guarding this boundary.
+
 ## Capability layer
 
 Resolves via [`kotoba-lang/industry`](https://github.com/kotoba-lang/industry)

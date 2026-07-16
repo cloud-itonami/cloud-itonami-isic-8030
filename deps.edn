@@ -1,0 +1,31 @@
+{:paths ["src"]
+ ;; langgraph brings langchain transitively (both zero-/single-dep, all
+ ;; .cljc → portable to JVM / SCI / ClojureScript / GraalVM/kotoba WASM).
+ ;; langchain-store centralizes the DatomicStore codec/schema/entity
+ ;; field-spec machinery (enc/dec*/identity-schema/map->tx/pull->map) so
+ ;; this store does NOT hand-roll its own copy (ADR-2607141600 — the
+ ;; exact enc/dec* two-liner had been independently reimplemented in
+ ;; ~190 cloud-itonami actor store.cljc files before this lib existed;
+ ;; this is a NEW store written after that lib landed, so it requires
+ ;; langchain-store instead of adding file #191).
+ :deps {io.github.kotoba-lang/langgraph
+        {:local/root "../../kotoba-lang/langgraph"}
+        io.github.kotoba-lang/langchain-store
+        {:local/root "../../kotoba-lang/langchain-store"}}
+ :aliases
+ {;; offline workspace dev — pin transitive langchain to local checkout
+  :dev {:override-deps
+        {io.github.kotoba-lang/langchain
+         {:local/root "../../kotoba-lang/langchain"}}}
+  ;; clojure -M:dev:run  → drive the demo through one OperationActor
+  :run {:main-opts ["-m" "investigation.sim"]}
+  :test {:extra-paths ["test"]
+         :extra-deps {io.github.cognitect-labs/test-runner
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"]
+         :exec-fn cognitect.test-runner.api/test}
+  ;; static analysis — clj-kondo from deps (no binary), errors fail CI.
+  :lint {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
+         :main-opts    ["-m" "clj-kondo.main"
+                        "--lint" "src" "test"
+                        "--fail-level" "error"]}}}
