@@ -1,0 +1,79 @@
+<html><head><meta charset="utf-8"><title>cloud-itonami-isic-8030 &middot; investigation activities</title><style>
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ok { color: #137a3f; }
+body { font-family: system-ui,-apple-system,sans-serif; margin: 0; color: #1a1a1a; background: #fafafa; }
+header.bar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e5e5e5; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+h2 { margin-top: 0; font-size: 15px; }
+.warn { color: #b25c00; background: #fff8e1; padding: 2px 6px; border-radius: 4px; }
+main { max-width: 980px; margin: 24px auto; padding: 0 20px; }
+header.bar h1 { font-size: 18px; margin: 0; font-weight: 600; }
+.muted { color: #888; font-size: 13px; }
+.critical { color: #fff; background: #b3261e; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.err { color: #b3261e; background: #fbe9e7; padding: 2px 6px; border-radius: 4px; }
+th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+header.bar .badge { margin-left: auto; font-size: 12px; color: #666; }
+code { font-size: 12px; background: #f4f4f4; padding: 1px 4px; border-radius: 3px; }
+</style></head><body>
+<header class="bar">
+  <h1>Investigation activities (ISIC 8030) — Operator Console</h1>
+  <span class="badge">read-only sample · RoutingGovernor-gated · never renders a conclusion, never authorizes surveillance</span>
+</header>
+<main>
+  <section class="card">
+    <h2>Case files</h2>
+    <p class="muted">Demo snapshot — build-time-generated from <code>investigation.store</code> via <code>investigation.render-html</code> (<code>clojure -M:dev:render-html</code>), regenerated nightly.</p>
+    <table>
+      <thead><tr><th>Case</th><th>Client</th><th>Matter type</th><th>Status</th><th>Authorization</th><th>Last op status</th></tr></thead>
+      <tbody>
+        <tr><td>case-100</td><td>cl-100</td><td>Insurance fraud claim review (demo)</td><td>open</td><td><span class="ok">verified</span></td><td><span class="critical">HARD hold &middot; structural-scope-gate</span></td></tr>
+        <tr><td>case-200</td><td>cl-100</td><td>Pre-employment background check (demo)</td><td>open</td><td><span class="ok">verified</span></td><td><span class="muted">no activity</span></td></tr>
+        <tr><td>case-300</td><td>cl-200</td><td>Skip-trace records research (demo)</td><td>open</td><td><span class="warn">unverified</span></td><td><span class="critical">HARD hold &middot; authorization-gate</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Investigators</h2>
+    <p class="muted">Committed hours reflect this run's auto-committed scheduling only.</p>
+    <table>
+      <thead><tr><th>Investigator</th><th>Name</th><th>Qualifications</th><th>Committed / capacity</th></tr></thead>
+      <tbody>
+        <tr><td>inv-100</td><td>Investigator A (demo)</td><td>insurance-siu-cert, state-pi-license</td><td>34 / 40 h</td></tr>
+        <tr><td>inv-200</td><td>Investigator B (demo)</td><td>state-pi-license</td><td>18 / 20 h</td></tr>
+        <tr><td>inv-300</td><td>Investigator C (demo)</td><td>records-research-cert, state-pi-license</td><td>0 / 40 h</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Action gate (RoutingGovernor, <code>investigation.policy</code>)</h2>
+    <p class="muted">HARD holds cannot be overridden. This actor never renders an investigative conclusion and never authorizes a surveillance method — neither is an op in the closed allowlist at all.</p>
+    <table>
+      <thead><tr><th>Op</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td><code>:log-case-record</code></td><td><span class="ok">auto-commit when clean, case authorized</span></td></tr>
+        <tr><td><code>:schedule-investigation-operation</code></td><td><span class="ok">auto-commit when clean</span> &middot; clearance-tier + weekly-capacity independently checked</td></tr>
+        <tr><td><code>:coordinate-report-delivery</code></td><td><span class="ok">auto-commit when clean</span> &middot; delivery LOGISTICS only, never report content</td></tr>
+        <tr><td><code>:flag-legal-compliance-concern</code></td><td><span class="warn">ALWAYS human approval, any phase/confidence</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Audit ledger (this run)</h2>
+    <p class="muted">Append-only decision-fact log — every proposal, hold and commit this scenario produced.</p>
+    <table>
+      <thead><tr><th>Fact</th><th>Op</th><th>Subject</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>committed</td><td><code>log-case-record</code></td><td>case-100</td><td>id, case-id, description, custodian</td></tr>
+        <tr><td>committed</td><td><code>schedule-investigation-operation</code></td><td>case-100</td><td>case-id, investigator-id, window, hours</td></tr>
+        <tr><td>committed</td><td><code>coordinate-report-delivery</code></td><td>case-100</td><td>id, case-id, recipient-channel, scheduled-at</td></tr>
+        <tr><td>committed</td><td><code>flag-legal-compliance-concern</code></td><td>case-300</td><td>case-id</td></tr>
+        <tr><td>policy-hold</td><td><code>schedule-investigation-operation</code></td><td>case-100</td><td>clearance-tier-gate</td></tr>
+        <tr><td>policy-hold</td><td><code>schedule-investigation-operation</code></td><td>case-100</td><td>capacity-gate</td></tr>
+        <tr><td>policy-hold</td><td><code>schedule-investigation-operation</code></td><td>case-300</td><td>authorization-gate</td></tr>
+        <tr><td>policy-hold</td><td><code>log-case-record</code></td><td>case-100</td><td>structural-scope-gate</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body></html>
