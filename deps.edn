@@ -8,7 +8,11 @@
  ;; ~190 cloud-itonami actor store.cljc files before this lib existed;
  ;; this is a NEW store written after that lib landed, so it requires
  ;; langchain-store instead of adding file #191).
- :deps {io.github.kotoba-lang/langgraph
+ :deps {
+        io.github.kotoba-lang/jp-go-digital-design-system
+        {:git/url "https://github.com/kotoba-lang/jp-go-digital-design-system"
+         :git/sha "83db99546eabc53613ae826ea41d1533a3c574af"}
+io.github.kotoba-lang/langgraph
         {:local/root "../../kotoba-lang/langgraph"}
         io.github.kotoba-lang/langchain-store
         {:local/root "../../kotoba-lang/langchain-store"}}
