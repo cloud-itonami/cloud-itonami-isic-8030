@@ -214,3 +214,44 @@
       (is (not (:hard? verdict)))
       (is (:escalate? verdict))
       (is (not (:ok? verdict))))))
+
+;; ---------------------------------------------------------------------------
+;; Capacity: every figure defaulted to 0, and 0 read as "no load"
+;; ---------------------------------------------------------------------------
+
+(deftest scheduling-against-an-unknown-investigator-no-longer-passes
+  (testing "with inv nil, `(:committed-hours inv 0)` and
+            `(:weekly-capacity-hours inv 0)` both gave 0, so the gate computed
+            `(> 0 0)` -- false -- and scheduling against a person who does not
+            exist in the store passed outright"
+    (let [[db actor] (fresh)
+          res (exec-op actor "t-unknown"
+                       {:op :schedule-investigation-operation :subject "case-100"
+                        :case-id "case-100" :schedule-id "sch-unknown"
+                        :investigator-id "inv-does-not-exist" :window "w" :hours 2}
+                       case-manager)]
+      (is (= :hold (get-in res [:state :disposition])))
+      (is (some #{:capacity-gate} (-> (store/ledger db) last :basis)))
+      (is (nil? (store/schedule-entry db "sch-unknown"))))))
+
+(deftest an-operation-stating-no-hours-no-longer-clears-the-capacity-gate
+  (testing "`(or hours 0)` meant an operation with no stated hours added
+            nothing to the projection and so could never exceed capacity"
+    (let [[db actor] (fresh)
+          res (exec-op actor "t-nohours"
+                       {:op :schedule-investigation-operation :subject "case-100"
+                        :case-id "case-100" :schedule-id "sch-nohours"
+                        :investigator-id "inv-100" :window "w"}
+                       case-manager)]
+      (is (= :hold (get-in res [:state :disposition])))
+      (is (some #{:capacity-gate} (-> (store/ledger db) last :basis))))))
+
+(deftest a-non-numeric-hours-figure-is-a-violation-not-a-crash
+  (let [[db actor] (fresh)
+        res (exec-op actor "t-badhours"
+                     {:op :schedule-investigation-operation :subject "case-100"
+                      :case-id "case-100" :schedule-id "sch-badhours"
+                      :investigator-id "inv-100" :window "w" :hours "2"}
+                     case-manager)]
+    (is (= :hold (get-in res [:state :disposition])))
+    (is (some #{:capacity-gate} (-> (store/ledger db) last :basis)))))

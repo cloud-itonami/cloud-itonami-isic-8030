@@ -202,15 +202,45 @@
           :detail (str "investigator lacks required qualification(s): " (vec missing))}]))))
 
 (defn- capacity-violations
+  "The investigator's weekly capacity against their committed hours plus
+  the hours this operation would add.
+
+  Every figure here used to be defaulted to 0, and each default read
+  `unknown` as `nothing`:
+
+    - `(or hours 0)` -- an operation stating NO hours added nothing to
+      the projection and so could never exceed capacity;
+    - `(:committed-hours inv 0)` -- an investigator with no recorded
+      commitments looked entirely free;
+    - `(:weekly-capacity-hours inv 0)` -- combined with the above, an
+      UNKNOWN investigator produced `(> 0 0)`, which is false, so
+      scheduling against a person who does not exist in the store
+      passed the capacity gate outright.
+
+  A capacity that cannot be computed is not spare capacity. Each figure
+  must be recorded and numeric, and the investigator must exist."
   [{:keys [op]} proposal st]
   (when (= op :schedule-investigation-operation)
     (let [{:keys [investigator-id hours]} (:value proposal)
           inv (store/investigator st investigator-id)
-          projected (+ (:committed-hours inv 0) (or hours 0))]
-      (when (> projected (:weekly-capacity-hours inv 0))
+          committed (:committed-hours inv)
+          capacity (:weekly-capacity-hours inv)]
+      (cond
+        (nil? inv)
+        [{:rule :capacity-gate
+          :detail (str "investigator " investigator-id " が登録されていない -- "
+                       "週次稼働余力を検算できないため割り当てない")}]
+
+        (not (and (number? hours) (number? committed) (number? capacity)))
+        [{:rule :capacity-gate
+          :detail (str "申請時間/既存コミット/週次上限のいずれかが数値として記録されていない "
+                       "(hours=" (pr-str hours) " committed=" (pr-str committed)
+                       " capacity=" (pr-str capacity) ") -- 余力を検算できない")}]
+
+        (> (+ committed hours) capacity)
         [{:rule :capacity-gate
           :detail (str "investigator's weekly capacity would be exceeded: "
-                       projected " > " (:weekly-capacity-hours inv 0))}]))))
+                       (+ committed hours) " > " capacity)}]))))
 
 (defn- structural-scope-violations [proposal]
   (let [ks  (set (keys (:value proposal)))
