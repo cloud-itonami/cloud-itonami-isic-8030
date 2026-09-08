@@ -86,7 +86,7 @@
                                    auto-resolves, at any confidence, any
                                    phase — it always reaches a human."
   (:require [clojure.set :as set]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [investigation.facts :as facts]
             [investigation.store :as store]))
 
@@ -257,7 +257,7 @@
   fires against a legitimate proposal's own default text (the self-
   tripping bug class documented on `scope-exclusion-phrases` above)."
   [proposal]
-  (let [text (str/lower-case (str (:summary proposal) " " (:rationale proposal)))
+  (let [text (str/lower (str (:summary proposal) " " (:rationale proposal)))
         hit  (some #(when (str/includes? text %) %) scope-exclusion-phrases)]
     (when hit
       [{:rule :scope-exclusion-gate

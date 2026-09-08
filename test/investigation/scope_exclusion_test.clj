@@ -17,7 +17,7 @@
   naturally mentions 'surveillance' as a routine field-work TYPE
   descriptor, which is exactly the situation a bare-noun exclusion list
   would have wrongly self-tripped on."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [clojure.test :refer [deftest is testing]]
             [investigation.llm :as llm]
             [investigation.policy :as policy]))
