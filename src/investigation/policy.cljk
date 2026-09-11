@@ -253,7 +253,7 @@
   "PUBLIC (not `defn-`) specifically so it can be unit-tested directly
   against every default mock-advisor proposal, independent of the rest of
   the governed pipeline/store setup — see
-  test/investigation/scope_exclusion_test.clj, which asserts this never
+  test/investigation/scope_exclusion_test.cljk, which asserts this never
   fires against a legitimate proposal's own default text (the self-
   tripping bug class documented on `scope-exclusion-phrases` above)."
   [proposal]
