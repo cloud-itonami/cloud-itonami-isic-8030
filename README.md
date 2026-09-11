@@ -57,7 +57,7 @@ Every governor-clean commit only ever writes a `:propose`-shaped SSoT
 entry (`:status :proposed`/`:logged`) — this actor coordinates, it never
 finalizes. See `docs/adr` in the superproject
 (`com-junkawasaki/root`, ADR for ISIC 8030) for the full design
-rationale, and `test/investigation/scope_exclusion_test.clj` for the
+rationale, and `test/investigation/scope_exclusion_test.cljk` for the
 regression test guarding this boundary.
 
 ## Capability layer
