@@ -12,7 +12,7 @@
     op7  scheduling on a case with unverified authorization     → authorization-gate REJECT → hold
     op8  legal/compliance concern flag (always human review, any phase) → escalate → approve → commit
 
-  Run: clojure -M:dev:run"
+  Run: kbb -M:dev:run"
   (:require [langgraph.graph :as g]
             [investigation.store :as store]
             [investigation.operation :as op]
