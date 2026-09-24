@@ -85,7 +85,7 @@
    10. flag-legal-compliance    — :flag-legal-compliance-concern NEVER
                                    auto-resolves, at any confidence, any
                                    phase — it always reaches a human."
-  (:require [clojure.set :as set]
+  (:require [kotoba.lang.coll :as set]
             [kotoba.lang.text :as str]
             [investigation.facts :as facts]
             [investigation.store :as store]))
