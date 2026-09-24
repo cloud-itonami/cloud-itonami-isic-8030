@@ -4,7 +4,7 @@
   (every class it advertises is actually backed by a catalog entry, no
   duplicate/aspirational entries) AND that it never grows a surveillance-
   method-authorization class by accident."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [investigation.facts :as facts]))
 
 (deftest catalog-entries-are-well-formed
