@@ -1,7 +1,7 @@
 (ns investigation.llm-test
   "CaseCoordinator-LLM proposal generation, unit-level (no governor/actor
   involved — that integration is covered by policy_contract_test)."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [investigation.llm :as llm]))
 
 (deftest log-case-record-proposal-carries-structured-fields
