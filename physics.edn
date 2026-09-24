@@ -1,0 +1,45 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README "Robotics premise": robots do stationary/mobile surveillance
+;; observation and document/evidence capture for a private investigation
+;; agency (ISIC 8030). Their physical work here is evidence handling in the
+;; agency's own premises: carrying sealed evidence bags from the intake desk
+;; to the evidence room, positioning the capture camera over a document on
+;; the copy stand, and photographing a frozen sample pack taken out of the
+;; evidence freezer before it thaws.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-8030"
+ :cases
+ [{:id :evidence-bags-to-evidence-room
+   :kind :transport
+   :procedure "evidence robot carries sealed evidence bags from the intake desk to the locked evidence room"
+   :params {:mass-kg 35.0 :payload-kg 5.0 :v-max-mps 1.0 :a-max-mps2 0.5
+            :brake-decel-mps2 0.8 :drive-force-n 70.0 :crr 0.02
+            :cog-height-m 0.50 :support-half-length-m 0.25 :max-time-s 1800.0}
+   :sweep {:param :distance-m :values [10.0 25.0 50.0 80.0 120.0]}
+   :quantity :cycle-time-s
+   :limit {:max 90.0 :basis "estimate: chain-of-custody practice of the agency keeps an unattended transfer under 90 s between two logged doors"}
+   :boundary {:lo 5.0 :hi 300.0}}
+  {:id :capture-camera-over-copy-stand
+   :kind :manipulator
+   :procedure "arm moves the evidence-capture camera from its rest pose to straight above a document on the copy stand"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 3.5 :m2-kg 2.5
+            :from [0.20 0.10] :to [0.55 0.55] :duration-s 2.0 :steps 400}
+   :sweep {:param :payload-kg :values [0.4 0.9 1.5 2.5 4.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 45.0 :basis "estimate: continuous shoulder torque of a light collaborative arm (~3-5 kg payload class)"}
+   :boundary {:lo 0.1 :hi 20.0}}
+  {:id :frozen-sample-pack-out-of-freezer
+   :kind :thermal
+   :procedure "frozen evidence sample pack (-20 C) is held in room air while it is photographed and labelled; its core must stay below 0 C"
+   :params {:conductivity-w-mk 2.2 :density-kg-m3 917.0 :specific-heat-j-kgk 2050.0
+            :t0-c -20.0 :t-hot-c 22.0 :h-front-w-m2k 10.0 :h-back-w-m2k 0.0 :t-back-ambient-c 22.0
+            :threshold-c 0.0 :duration-s 1800.0 :nodes 5}
+   :sweep {:param :thickness-m :values [0.001 0.002 0.004 0.006 0.008]}
+   :quantity :time-to-threshold-s
+   :limit {:min 120.0 :basis "estimate: photographing and labelling a sample takes up to 2 minutes; pack modeled as half its thickness (symmetric), ice properties, latent heat of melting not modeled (sensible heat only, so the time is short-side)"}
+   :boundary {:lo 0.0008 :hi 0.004}}]}
